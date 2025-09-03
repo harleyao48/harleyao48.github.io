@@ -7,15 +7,56 @@
             font-family: Arial, sans-serif;
             margin: 20px;
         }
+        img {
+            box-shadow: 0 4px 16px rgba(17, 106, 87, 0.5);
+            border-radius: 8px;
+        }
+        nav a {
+            color: rgba(17, 106, 87, 0.5);
+        }
     </style>
 </head>
 <body>
-    <h1>Welcome to Project 0!</h1>
+    <nav style="display: flex; gap: 18px; align-items: center; padding: 10px 0; margin-bottom: 28px; border-bottom: 2px solid rgba(17, 106, 87, 0.5);">
+        <a href="/index.html" style="text-decoration: none; font-weight: bold; padding: 6px 14px;">Home</a>
+        <a href="/0/index.html" style="text-decoration: none; font-weight: bold; padding: 6px 14px;">Project 0</a>
+        <a href="/1/index.html" style="text-decoration: none; font-weight: bold; padding: 6px 14px;">Project 1</a>
+        <a href="/2/index.html" style="text-decoration: none; font-weight: bold; padding: 6px 14px;">Project 2</a>
+        <a href="https://cal-cs180.github.io/fa25/hw/proj0/index.html" style="margin-left: auto; text-decoration: none; font-weight: bold; padding: 6px 14px;">Spec</a>
+    </nav>
+    <h1>Project 0: Becoming Friends with Your Camera</h1>
     <h2> Part 1: Lauren</h2>
     <p> Here is a close up of my friend, Lauren! Can you tell which one is a 0.5 photo and which one is normal?</p>
-    <img src="/0/media/lauren1.JPG" alt="Lauren 1" width="300">
-    <img src="/0/media/lauren2.JPG" alt="Lauren 2" width="300">
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3>Close Up</h3>
+            <img src="/0/media/lauren1.JPG" alt="Lauren 1" width="300">
+        </div>
+        <div>
+            <h3>Normal</h3>
+            <img src="/0/media/lauren2.JPG" alt="Lauren 2" width="300">
+        </div>
+    </div>
 
-    <h2> Part 2: Durant Ave.</h2>
+    <h2> Part 2: Ellsworth St.</h2>
+    <p> Now, here are images of Ellsworth Street. This time, the zoomed photo looks flatter because our field of view is smaller.</p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3>Zoomed</h3>
+            <img src="/0/media/ellsworth1.JPG" alt="Ellsworth 1" width="300">
+        </div>
+        <div>
+            <h3>Normal</h3>
+            <img src="/0/media/ellsworth2.JPG" alt="Ellsworth 2" width="300">
+        </div>
+    </div>
+    <h2> Part 3: Doll-y</h2>
+    <p> Here is my attempt at a Dolly Zoom of my Wingman plushie. The plushie stays the same size, but the candles in the back start changing size!</p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3>Wingman</h3>
+            <img src="/0/media/wingman.gif" alt="Wingman" width="300">
+        </div>
+        
 </body>
 </html>

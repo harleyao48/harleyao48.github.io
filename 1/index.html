@@ -1,15 +1,162 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>My Portfolio</title>
+    <title>Harley Ao - Project 1</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
         }
+        nav a {
+            color: rgba(17, 106, 87, 0.5);
+        }
     </style>
 </head>
 <body>
-    <h1>Welcome to Project 1!</h1>
+    <nav style="display: flex; gap: 18px; align-items: center; padding: 10px 0; margin-bottom: 28px; border-bottom: 2px solid rgba(17, 106, 87, 0.5);">
+        <a href="/index.html" style="text-decoration: none; font-weight: bold; padding: 6px 14px; color: rgba(17, 106, 87, 0.5);">Home</a>
+        <a href="/0/index.html" style="text-decoration: none; font-weight: bold; padding: 6px 14px; color: rgba(17, 106, 87, 0.5);">Project 0</a>
+        <a href="/1/index.html" style="text-decoration: none; font-weight: bold; padding: 6px 14px; color: rgba(17, 106, 87, 0.5);">Project 1</a>
+        <a href="/2/index.html" style="text-decoration: none; font-weight: bold; padding: 6px 14px; color: rgba(17, 106, 87, 0.5);">Project 2</a>
+    </nav>
+
+    <h1 style="text-align: center;">Welcome to Project 1!</h1>
+    <h1>Overview</h1>
+        <p>
+            This project explores the process of reconstructing color images from Sergei Mikhailovich Prokudin-Gorskii's glass plate negatives. 
+            Back in his time, color photography hadn't existed, but Prodkudin-Gorskii captured three separate black-and-white photographs using red, green, and blue filters.
+            Thanks to this, we can recreate the original color images by aligning the separate channels.
+        </p>
+    <h1>Approach</h1>
+        <h3> Naive </h3>
+        <p>
+            My initial approach was to split the image into its red, green, and blue counterparts.
+            Next, I cropped my image by 10% on each side to focus on the central part, eliminating any borders or unnecessary details.
+            Then, I would check every shift from -15 to 15 horizontally and vertically to find the best alignment for the green and red channels against the blue channel.
+            I would calculate the score using Euclidean distance, meaning the lower the score, the better the alignment.
+            Lastly, I display the image with the best alignment.
+        </p>
+        <h3> Pyramid </h3>
+        <p>
+            My naive approach worked well for small images, but it didn't work for large images (.tif files).
+            For my pyramid approach, I recursively downscale the images for 4 layers, and then apply my naive approach to find the best alignment.
+            I used a max shift range of 12, checking from ranges -12 to 12 horizontally and vertically.
+            I used 12, because this efficiently ran my searches in less than a minute on large images.
+            After finding the best alignment on the downscaled image, the images are upscaled back to their original size and aligned with the best offsets found.
+        </p>
+        <h3> Issues </h3>
+        <p> 
+            One issue I ran into was using normalized cross-correlation as my scoring method.
+            This method worked well for scoring, but took much more time computing than Euclidean distance.
+            Especially for the Melon image, this become more noticeable, as I needed to check 30 shifts rather than 16 to get a good alignment.
+            This issue was resolved by switching back to Euclidean distance with a more aggressive crop (5% -> 10%), which was much faster.
+            One minor issue I noticed was that finding a better red shift alignment was more difficult than the green shift alignment.
+            This was also fixed with more aggressive cropping.
+        </p>
+    <h1> Gallery</h1>
+    <h2 style="text-align: center;">Small Images</h2>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3>Cathedral </h3>
+            <img src="/1/media/cathedral.png" alt="Cathedral" width="400">
+            <p style="color: #888; font-size: 0.95em;"> Green Shift: (5, 2) , Red Shift: (12, 3) </p>
+        </div>
+         <div>
+            <h3>Monastery </h3>
+            <img src="/1/media/monastery.png" alt="Monastery" width="400">
+            <p style="color: #888; font-size: 0.95em;"> Green Shift: (-3, 2) , Red Shift: (3, 2) </p>
+        </div>
+        <div>
+            <h3>Tobolsk </h3>
+            <img src="/1/media/tobolsk.png" alt="Tobolsk" width="400">
+            <p style="color: #888; font-size: 0.95em;"> Green Shift: (3, 2) , Red Shift: (6, 3) </p>
+        </div>
+        
+    </div>
+    <h2 style="text-align: center;">Large Images</h2>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3>Church </h3>
+            <img src="/1/media/church.png" alt="Church" width="400">
+            <p style="color: #888; font-size: 0.95em;"> Green Shift: (25, 3) , Red Shift: (58, -5) </p>
+        </div>
+        <div>
+            <h3>Emir </h3>
+            <img src="/1/media/emir.png" alt="Emir" width="400">
+            <p style="color: #888; font-size: 0.95em;"> Green Shift: (49, 24) , Red Shift: (103, 57) </p>
+        </div>
+        <div>
+            <h3>Harvesters </h3>
+            <img src="/1/media/harvesters.png" alt="Harvesters" width="400">
+            <p style="color: #888; font-size: 0.95em;"> Green Shift: (60, 16) , Red Shift: (120, 13) </p>
+        </div>
+    </div>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3>Icon </h3>
+            <img src="/1/media/icon.png" alt="Icon" width="400">
+            <p style="color: #888; font-size: 0.95em;"> Green Shift: (40, 17) , Red Shift: (89, 23) </p>
+        </div>
+        <div>
+            <h3>Italil </h3>
+            <img src="/1/media/italil.png" alt="Italil" width="400">
+            <p style="color: #888; font-size: 0.95em;"> Green Shift: (38, 21) , Red Shift: (77, 35) </p>
+        </div>
+        <div>
+            <h3>Lastochikino </h3>
+            <img src="/1/media/lastochikino.png" alt="Lastochikino" width="400">
+            <p style="color: #888; font-size: 0.95em;"> Green Shift: (-3, -2) , Red Shift: (76, -9) </p>
+        </div>
+    </div>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3>Lugano </h3>
+            <img src="/1/media/lugano.png" alt="Lugano" width="400">
+            <p style="color: #888; font-size: 0.95em;"> Green Shift: (41, -17) , Red Shift: (92, -29) </p>
+        </div>
+        <div>
+            <h3>Melons </h3>
+            <img src="/1/media/melons.png" alt="Melons" width="400">
+            <p style="color: #888; font-size: 0.95em;"> Green Shift: (82, 9) , Red Shift: (177, 11) </p>
+        </div>
+        <div>
+            <h3>Self Portrait </h3>
+            <img src="/1/media/self_portrait.png" alt="Self Portrait" width="400">
+            <p style="color: #888; font-size: 0.95em;"> Green Shift: (79, 29) , Red Shift: (175, 34) </p>
+        </div>
+    </div>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3>Siren </h3>
+            <img src="/1/media/siren.png" alt="Siren" width="400">
+            <p style="color: #888; font-size: 0.95em;"> Green Shift: (49, -6) , Red Shift: (96, -25) </p>
+        </div>
+        <div>
+            <h3>Three Generations </h3>
+            <img src="/1/media/three_generations.png" alt="Three Generations" width="400">
+            <p style="color: #888; font-size: 0.95em;"> Green Shift: (53, 14) , Red Shift: (112, 11) </p>
+        </div>
+    </div>
+
+    <h2 style="text-align: center;">Additional Images</h2>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3>Sunset </h3>
+            <img src="/1/media/sunset.png" alt="Sunset" width="400">
+            <p style="color: #888; font-size: 0.95em;"> Green Shift: (43, 8) , Red Shift: (-45, -78) </p>
+        </div>
+        <div>
+            <h3>Garden </h3>
+            <img src="/1/media/garden.png" alt="Garden" width="400">
+            <p style="color: #888; font-size: 0.95em;"> Green Shift: (60, 28) , Red Shift: (126, 35) </p>
+        </div>
+         <div>
+            <h3>Bridge </h3>
+            <img src="/1/media/bridge.png" alt="Bridge" width="400">
+            <p style="color: #888; font-size: 0.95em;"> Green Shift: (43, -8) , Red Shift: (97, -35) </p>
+        </div>
+    </div>
+
+
 </body>
 </html>

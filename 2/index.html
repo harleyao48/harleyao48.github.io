@@ -1,15 +1,401 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>My Portfolio</title>
+    <title>Harley Ao - Project 2</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
         }
+        nav a {
+            color: rgba(17, 106, 87, 0.5);
+        }
     </style>
 </head>
 <body>
-    <h1>Welcome to Proj 2</h1>
+    <nav style="display: flex; gap: 18px; align-items: center; padding: 10px 0; margin-bottom: 28px; border-bottom: 2px solid rgba(17, 106, 87, 0.5);">
+        <a href="/index.html" style="text-decoration: none; font-weight: bold; padding: 6px 14px; color: rgba(17, 106, 87, 0.5);">Home</a>
+        <a href="/0/index.html" style="text-decoration: none; font-weight: bold; padding: 6px 14px; color: rgba(17, 106, 87, 0.5);">Project 0</a>
+        <a href="/1/index.html" style="text-decoration: none; font-weight: bold; padding: 6px 14px; color: rgba(17, 106, 87, 0.5);">Project 1</a>
+        <a href="/2/index.html" style="text-decoration: none; font-weight: bold; padding: 6px 14px; color: rgba(17, 106, 87, 0.5);">Project 2</a>
+        <a href="https://cal-cs180.github.io/fa25/hw/proj2/index.html" style="margin-left: auto; text-decoration: none; font-weight: bold; padding: 6px 14px;">Spec</a>
+    </nav>
+
+    <h1 style="text-align: center;">Welcome to Project 2!</h1>
+    <h2> Part 1: Fun with Filters </h2>
+    <h3 style="text-align: center;"> 1.1: Convolutions From Scratch </h3>
+    <p>
+        To implement convolution, I started by creating a function that flips a filter horizontally and vertically, pads the image with zeros, and applies the flipped filter to each pixel of the image.
+        Implementing this function using four nested for loops and two for loops yielded similar results in quality and runtime.
+        However, using SciPy's built-in convolve2d function significantly improved runtime while maintaining the same quality.
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3 style="text-align: center;"> At Riot Games HQ </h3>
+            <img src="/2/media/ritogames_long.jpg" alt="Original" width="400">
+        </div>
+    </div>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+         <div>
+            <h3 style="text-align: center;"> 3x3 Filter with 4 For Loops </h3>
+            <img src="/2/media/3by3_4for.png" alt="3x3 Filter, 4 For Loops" width="400">
+            <p style="color: #888; font-size: 0.95em; "> Runtime: 12.9 seconds </p>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 3x3 Filter with 2 For Loops </h3>
+            <img src="/2/media/3by3_2for.png" alt="3x3 Filter, 2 For Loops" width="400">
+            <p style="color: #888; font-size: 0.95em;"> Runtime: 10.2 seconds </p>
+        </div>
+         <div>
+            <h3 style="text-align: center;"> 3x3 Filter with SciPy Convolve2D </h3>
+            <img src="/2/media/3by3_scipy.png" alt="3x3 Filter, SciPy Convolve2D" width="400">
+            <p style="color: #888; font-size: 0.95em;"> Runtime: 0.3 seconds </p>
+        </div>
+    </div>
+    <p>
+        When I changed the filter to be 9x9, the results were a blurrier version of the 3x3 filter convolution.
+        This is due to the larger filter size averaging over neighboring pixels more extensively, causing a stronger blurring effect.
+        The runtime for both my convolution implementation and SciPy's convolve2d did not increase significantly.
+    </p>
+     <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3 style="text-align: center;"> 9x9 Filter with 2 For Loops </h3>
+            <img src="/2/media/9by9_2for.png" alt="9x9 Filter, 2 For Loops" width="400">
+            <p style="color: #888; font-size: 0.95em;"> Runtime: 11.0 seconds </p>
+        </div>
+         <div>
+            <h3 style="text-align: center;"> 9x9 Filter with SciPy Convolve2D </h3>
+            <img src="/2/media/9by9_scipy.png" alt="9x9 Filter, SciPy Convolve2D" width="400">
+            <p style="color: #888; font-size: 0.95em;"> Runtime: 0.6 seconds </p>
+        </div>
+    </div>
+    <p>
+        Next, I applied my convolution function to the finite difference filters in the X and the Y directions.
+        Based on the results, you can see that the gradient in the X direction highlights vertical edges, while the gradient in the Y direction emphasizes horizontal edges.
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3 style="text-align: center;"> Gradient X </h3>
+            <img src="/2/media/gradient_x.png" alt="Gradient X" width="400">
+            <p style="color: #888; font-size: 0.95em;"> Runtime: 10.2 seconds </p>
+        </div>
+         <div>
+            <h3 style="text-align: center;"> Gradient Y </h3>
+            <img src="/2/media/gradient_y.png" alt="Gradient Y" width="400">
+            <p style="color: #888; font-size: 0.95em;"> Runtime: 11.2 seconds </p>
+        </div>
+    </div>
+    <p>
+        Here is my convolution code snippet!
+    </p>
+    <pre style="background: #f4f4f4; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 1em; border: 1px solid #ddd;">
+    <code>
+        #Convolve with 4 for loops
+        def convolution_with_4fors(image, filter):
+            #flip filter vertically and horizontally
+            filter = np.flipud(filter)
+            filter = np.fliplr(filter)
+
+            #get dimensions of image and filter
+            image_height, image_width = image.shape
+            filter_height, filter_width = filter.shape
+
+            #pad image with zeros
+            pad_height = filter_height // 2
+            pad_width = filter_width // 2
+            padded_image = np.pad(image, ((pad_height, pad_height), (pad_width, pad_width)), mode='constant', constant_values=0)
+
+            #create output array
+            output = np.zeros_like(image)
+
+            #perform convolution
+            for i in range(image_height):
+                for j in range(image_width):
+                    sum_val = 0
+                    for m in range(filter_height):
+                        for n in range(filter_width):
+                            sum_val += padded_image[i + m, j + n] * filter[m, n]
+                    output[i, j] = sum_val
+            return output
+
+        #Optimized Convolve function
+        def convolution(image, filter):
+            #flip filter vertically and horizontally
+            filter = np.flipud(filter)
+            filter = np.fliplr(filter)
+
+            #get dimensions of image and filter
+            image_height, image_width = image.shape
+            filter_height, filter_width = filter.shape
+
+            #pad image with zeros
+            pad_height = filter_height // 2
+            pad_width = filter_width // 2
+            padded_image = np.pad(image, ((pad_height, pad_height), (pad_width, pad_width)), mode='constant', constant_values=0)
+
+            #create output array
+            output = np.zeros_like(image)
+
+            #perform convolution
+            for i in range(image_height):
+                for j in range(image_width):
+                    region = padded_image[i:i + filter_height, j:j + filter_width]
+                    output[i, j] = np.sum(region * filter)
+            return output
+
+    </code>
+    </pre>
+    <h3 style="text-align: center;"> 1.2: Finite Difference Operator </h3>
+    <p> 
+        Here is a photo of a cameraman. We will be convolving the image with the finite difference filters and binarizing its gradient magnitude image.
+    </p>
+     <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3 style="text-align: center;"> Cameraman </h3>
+            <img src="/2/media/cameraman.png" alt="Cameraman" width="400">
+        </div>
+    </div>
+    <p> 
+        Results after convolving in the X and Y directions:
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <img src="/2/media/1.2horizontal.png" alt="Horzontal Edges" width="400">
+        </div>
+        <div>
+            <img src="/2/media/1.2vertical.png" alt="Vertical Edges" width="400">
+        </div>
+    </div>
+    <p> 
+        Results after convolving in the X and Y directions as well as the gradient magnitude:
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <img src="/2/media/1.2horizontal.png" alt="Horzontal Edges" width="400">
+        </div>
+        <div>
+            <img src="/2/media/1.2vertical.png" alt="Vertical Edges" width="400">
+        </div>
+        <div>
+            <img src="/2/media/1.2gradient.png" alt="Gradient Magnitude" width="400">
+        </div>
+    </div>
+    <p> 
+        Lastly, here are the binarized images. When I used a threshold of 0.1, the edges were well-defined, but the grass created a lot of noise.
+        Increasing the threshold to 0.2 reduced the noise, but caused the buildings in the backgorund to not have defined edges as shown in the gradient magnitude image.
+        Therefore, I concluded the right threshold to be 0.15, which minimized the noise while keeping the edges well-defined.
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <img src="/2/media/1.2threshold0.1.png" alt="Binarized Image (Threshold 0.1)" width="400">
+        </div>
+        <div>
+            <img src="/2/media/1.2threshold0.15.png" alt="Binarized Image (Threshold 0.15)" width="400">
+        </div>
+        <div>
+            <img src="/2/media/1.2threshold0.2.png" alt="Binarized Image (Threshold 0.2)" width="400">
+        </div>
+    </div>
+    <h3 style="text-align: center;"> 1.3: Derivative of Gaussian (DoG) Filter </h3>
+    <p> 
+        Because the binarized image from the previous part was noisy, we will be eliminating noise with two methods: Gaussian blurring and the Derivative of Gaussian (DoG) filter.
+        Blurring before convolution actually helps reduce noise by averaging out pixel values and smoothing out the parts of the image that would generate noise.
+        Here are the results after applying Gaussian blurring:
+    </p>
+     <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <img src="/2/media/1.3blur_gradient.png" alt="Gradient (Gaussian Blur)" width="400">
+        </div>
+        <div>
+            <img src="/2/media/1.3blur_binarized.png" alt="Binarized Image (Gaussian Blur)" width="400">
+        </div>
+    </div>
+    <p> 
+        Next, I applied the Derivative of Gaussian (DoG) filter to the cameraman image. This only took a single convolution and resulted in the same binarized image as the Gaussian blurring method!
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <img src="/2/media/1.3dogfilter_x.png" alt="Gradient in X (DoG)" width="400">
+        </div>
+        <div>
+            <img src="/2/media/1.3dogfilter_y.png" alt="Gradient in Y (DoG)" width="400">
+        </div>
+        <div>
+            <img src="/2/media/1.3dogfilter_binarized.png" alt="Binarized Image (DoG)" width="400">
+        </div>
+    </div>
+     <h2> Part 2: Fun with Frequencies! </h2>
+    <h3 style="text-align: center;"> 2.1: Image "Sharpening" </h3>
+    <p> 
+        Here, we will be practicing image sharpening practices that are used in cheaper cameras.
+        Rather than using a high-quality lens, we can use software to enhance the edges in an image.
+        To accomplish this, I use a Gaussian filter to create a blurred version of the image. 
+        Then, I subtract the blurred image from the original image to obtain the high-frequency components, which contain the edges.
+        By adding these high-frequency components back to the original image, we can enhance the edges and create a sharper appearance.
+        Now, you can see that the lines on the building are more defined!
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3 style="text-align: center;"> Original Taj Image </h3>
+            <img src="/2/media/taj.jpg" alt="Original Taj Image" width="400">
+        </div>
+    </div>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <img src="/2/media/2.1blurred.png" alt="Blurred Taj Image" width="400">
+        </div>
+        <div>
+            <img src="/2/media/2.1high_freq.png" alt="High Frequency Components" width="400">
+        </div>
+        <div>
+            <img src="/2/media/2.1sharpened.png" alt="Sharpened Taj Image" width="400">
+        </div>
+    </div>
+    <p> 
+        Now, we'll do the same thing with this photo of a boyfriend application I found on campus! 
+        Sharpening the image will increase the fall aesthetic of the photo. 
+        However, because the image is low quality and because of the blurring process, the image sharpening makes it harder to see the smaller words and the QR code.
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3 style="text-align: center;"> Boyfriend Application </h3>
+            <img src="/2/media/boyfriend_app.jpg" alt="Original Boyfriend Application" width="400">
+        </div>
+    </div>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <img src="/2/media/2.1blurred_bfapp.png" alt="Blurred Boyfriend Application" width="400">
+        </div>
+        <div>
+            <img src="/2/media/2.1highfreq_bfapp.png" alt="High Frequency Components" width="400">
+        </div>
+        <div>
+            <img src="/2/media/2.1sharpened_bfapp.png" alt="Sharpened Boyfriend Application" width="400">
+        </div>
+    </div>
+    <p> 
+        Here is the result of sharpening the boyfriend application image twice. As you can see, the image loses its color and becomes very grainy.
+        The edges stay defined, but the other details are lost.
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3 style="text-align: center;"> Sharpened Boyfriend Application </h3>
+            <img src="/2/media/sharpened_boyfriend_app.png" alt="Sharpened Boyfriend Application" width="400">
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 2x Sharpened Boyfriend Application </h3>
+            <img src="/2/media/2x_sharpened_boyfriend_app.png" alt="2x Sharpened Boyfriend Application" width="400">
+        </div>
+    </div>
+    <h3 style="text-align: center;"> 2.2: Hybrid Images </h3>
+    <p> 
+        Now, we will be combining two images to create a hybrid image using the same technique as image sharpening.
+        By blurring one image and extracting the high-frequency components of another image, we can combine them to create a hybrid image.
+        Here is the result of combining a photo of Derek and Nutmeg!
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <img src="/2/media/2.2hybrid.png" alt="Hybrid Image">
+        </div>
+    </div>
+    <p>
+        I also created a hybrid image of my friend Ed and an image of an Animal Crossing Villager, Derwin.
+        I choose a villager for each of my friends' contact photos, so I thought it would be fun to create a hybrid image of the two!    
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <img src="/2/media/2.2hybrid_dedwin.png" alt="Ed and Derwin Hybrid Image">
+        </div>
+    </div>
+    <p>
+        My favorite hybrid image that I created is a combination of a photo of my friends, Lauren and Ed.
+        This was harder because I am only using two points to align the images. 
+        Therefore, although the heads are aligned, the eyes are not.
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <img src="/2/media/2.2hybrid_laured.png" alt="Lauren and Ed Hybrid Image">
+        </div>
+    </div>
+    <p>
+        The process for alignment is illustrated through the images' Fourier transforms. 
+        Below, you can see the frequencies of the two original images, their convolved versions, and the final hybrid image.
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <img src="/2/media/2.2frequencies_laured.png" alt="Lauren and Ed Frequencies">
+        </div>
+    </div>
+    <h3 style="text-align: center;"> 2.3 + 2.4: Gaussian and Laplacian Stacks & Multiresolution Blending </h3>
+    <p>
+        Now, we will be blending two images together using Gaussian and Laplacian stacks.
+        Below, I am blending together a photo of an apple and a photo of an orange. 
+        Here is the pyramid visualization of the apple image throughout the Gaussian and Laplacian stacks.
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <img src="/2/media/2.3gaussian.png" alt="Gaussian Stack of Apple">
+        </div>
+    </div>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <img src="/2/media/2.3laplacian.png" alt="Laplacian Stack of Apple">
+        </div>
+    </div>
+    <p>
+        Now, here's the hybrid image of the apple and orange after blending the two images together using multiresolution blending!
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <img src="/2/media/2.4orapple.png" alt="Hybrid Image of Apple and Orange">
+        </div>
+    </div>
+    <p>
+        I also created some hybrid images of some video game characters! First, here are two more Animal Crossing villagers, Kat and Tangy.
+        I use them for my sister and my mom's contact photos, so I wanted to see how similar the two of them look!
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <img src="/2/media/2.4katangy.png" alt="Hybrid Image of Kat and Tangy">
+        </div>
+    </div>
+    <p>
+        Next, here is a hybrid image of two different Ahri skins from League of Legends.
+        They are supposed to be different versions of the same skin, with the After Hours version being more expensive.
+        I have included the pyramid visualization as well!
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <img src="/2/media/2.4ahris.png" alt="Hybrid Image of Ahri Skins">
+        </div>
+    </div>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <img src="/2/media/2.4ahris_process.png" alt="Process of Hybrid Ahri Skins">
+        </div>
+    </div>
+    <p>
+        Lastly, I created a hybrid image of my cat, Minnie in a treehole.
+        This required an irregular mask, as I am blending a circular object this time.
+        It was more complicated, as I had to resize the image of Minnie and manually crop him so that he would fit into the treehole.
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3 style="text-align: center;"> Original Minnie Photo </h3>
+            <img src="/2/media/minnie_tree.jpg" alt="Minnie" width="300">
+        </div>
+        <div>
+            <h3 style="text-align: center;"> Original Tree Photo </h3>
+            <img src="/2/media/tree.jpeg" alt="Tree with Hole" width="300">
+        </div>
+        <div>
+            <img src="/2/media/minnie_in_tree.png" alt="Minnie in Tree" width="375">
+        </div>
+    </div>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <img src="/2/media/2.4minnie_in_tree.png" alt="Minnie in Tree">
+        </div>
+    </div>
 </body>
 </html>

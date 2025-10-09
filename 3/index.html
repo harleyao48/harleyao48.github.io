@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Harley Ao - Project 3</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        nav a {
+            color: rgba(17, 106, 87, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <nav style="display: flex; gap: 18px; align-items: center; padding: 10px 0; margin-bottom: 28px; border-bottom: 2px solid rgba(17, 106, 87, 0.5);">
+        <a href="/index.html" style="text-decoration: none; font-weight: bold; padding: 6px 14px; color: rgba(17, 106, 87, 0.5);">Home</a>
+        <a href="/0/index.html" style="text-decoration: none; font-weight: bold; padding: 6px 14px; color: rgba(17, 106, 87, 0.5);">Project 0</a>
+        <a href="/1/index.html" style="text-decoration: none; font-weight: bold; padding: 6px 14px; color: rgba(17, 106, 87, 0.5);">Project 1</a>
+        <a href="/2/index.html" style="text-decoration: none; font-weight: bold; padding: 6px 14px; color: rgba(17, 106, 87, 0.5);">Project 2</a>
+        <a href="/3/index.html" style="text-decoration: none; font-weight: bold; padding: 6px 14px; color: rgba(17, 106, 87, 0.5);">Project 3</a>
+        <a href="https://cal-cs180.github.io/fa25/hw/proj3/index.html" style="margin-left: auto; text-decoration: none; font-weight: bold; padding: 6px 14px;">Spec</a>
+    </nav>
+
+    <h1 style="text-align: center;"> Project 3A: Imaging Warping and Mosaicing </h1>
+    <h2> Part 1: Shoot the Pictures </h2>
+    <p>
+        To have the best warped photos, I wanted to make sure I wasn't moving my camera too much other than rotating it.
+        Any movement would cause the center of projection to change.
+        So, I used a tripod to take photos around campus!
+        Here are the photos I took, click any of them to open the full image in a new tab!
+    </p>
+     <h3 style="text-align: center;"> Doe Library </h3>
+     <div style="display: flex; gap: 20px; justify-content: center;">
+         <div>
+            <h3 style="text-align: center;"> Left </h3>
+            <a href="/3/media/Doe_Left.jpeg" target="_blank">
+                <img src="/3/media/Doe_Left.jpeg" alt="Doe Library Left" width="600">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> Right </h3>
+            <a href="/3/media/Doe_Right.jpeg" target="_blank">
+                <img src="/3/media/Doe_Right.jpeg" alt="Doe Library Right" width="600">
+            </a>
+        </div>
+    </div>
+    <h3 style="text-align: center;"> Campanile Way </h3>
+     <div style="display: flex; gap: 20px; justify-content: center;">
+         <div>
+            <h3 style="text-align: center;"> Left </h3>
+            <a href="/3/media/campanileway_left.jpeg" target="_blank">
+                <img src="/3/media/campanileway_left.jpeg" alt="Campanile Way Left" width="600">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> Right </h3>
+            <a href="/3/media/campanileway_right.jpeg" target="_blank">
+                <img src="/3/media/campanileway_right.jpeg" alt="Campanile Way Right" width="600">
+            </a>
+        </div>
+    </div>
+    <h3 style="text-align: center;"> My Room </h3>
+     <div style="display: flex; gap: 20px; justify-content: center;">
+         <div>
+            <h3 style="text-align: center;"> Left </h3>
+            <a href="/3/media/room_left.jpeg" target="_blank">
+                <img src="/3/media/room_left.jpeg" alt="My Room Left" width="600">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> Right </h3>
+            <a href="/3/media/room_right.jpeg" target="_blank">
+                <img src="/3/media/room_right.jpeg" alt="My Room Right" width="600">
+            </a>
+        </div>
+    </div>
+    <h2> Part 2: Recover Homographies </h2>
+    <div style="display: flex; gap: 200px; justify-content: center; align-items: center;">
+        <div style="max-width: 600px;">
+            <p>
+                With the photos taken, I now select points that both photos share using the correspondence tool. 
+                Using these points, I can solve for the homography matrix H, using the formulas on the right. 
+                Each pair of points is used to help me solve for the 8 unknowns that make up the h in the equation, Ah = b.
+                Using least-squares, I am finding the values of h that minimize the error of the equation. 
+            </p>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> Equations </h3>
+            <a href="/3/media/equations.jpg" target="_blank">
+                <img src="/3/media/equations.jpg" alt="Equations" width="400">
+            </a>
+        </div>
+    </div>
+    <p> 
+        Here are the correspondence points used for each pair of images and their corresponding homographies.
+    </p>
+     <h3 style="text-align: center;"> Doe Library </h3>
+      <div style="display: flex; gap: 20px; justify-content: center; align-items: center;">
+        <div style="max-width: 500px;">
+        <p>
+            H:<br>
+            [ 2.57047237e+00 -1.25052831e-01 -4.03578884e+03 ]<br>
+            [ 7.12178980e-01  2.02616982e+00 -1.82702040e+03 ]<br>
+            [ 3.96990770e-04 -1.08345475e-05  1.00000000e+00 ]
+        </p>
+        </div>
+    
+        <a href="/3/media/doe_correspondences.png" target="_blank">
+            <img src="/3/media/doe_correspondences.png" alt="Doe Library Correspondences" width="1000">
+        </a>
+    </div>
+    <h3 style="text-align: center;"> Campanile Way </h3>
+     <div style="display: flex; gap: 20px; justify-content: center; align-items: center;">
+       <div style="max-width: 500px;">
+        <p>
+            H:<br>
+            [ 2.05283631e+00 -1.55454904e-01 -3.04147739e+03] <br>
+            [ 5.43877208e-01  1.71084250e+00 -1.40165038e+03] <br>
+            [ 2.68497102e-04 -7.45051951e-06  1.00000000e+00]
+        </p>
+        </div>
+            <a href="/3/media/campanileway_correspondences.png" target="_blank">
+                <img src="/3/media/campanileway_correspondences.png" alt="Campanile Way Correspondences" width="1000">
+            </a>
+        
+    </div>
+    <h3 style="text-align: center;"> My Room </h3>
+      <div style="display: flex; gap: 20px; justify-content: center; align-items: center;">
+        <div style="max-width: 500px;">
+            <p>
+                H:<br>
+                [ 3.82812876e-01  3.58903911e-02  1.77691437e+03] <br>
+                [-2.24894247e-01  8.38900210e-01  1.73770319e+02] <br>
+                [-1.57198750e-04  1.37462536e-05  1.00000000e+00]
+            </p>
+        </div>
+        <a href="/3/media/room_correspondences.png" target="_blank">
+            <img src="/3/media/room_correspondences.png" alt="My Room Correspondences" width="1000">
+        </a>
+    </div>
+    <h2> Part 3: Warp the Images </h2>
+    <p>
+        Next, we apply the homography matrix we found to warp one of the images to align with the other.
+        We will be using two different methods to do this to compare the results.
+        Nearest neighbor interpolation rounds coordinates to the nearest pixel value.
+        Bilinear interpolations uses the weighted average of the four neighboring pixels to determine the pixel value.
+        To test that my implementations of these methods were correct, I rectified images of two rectangular object that were taken at an angle.
+        The quality of the photos from bilinear interpolation is slightly better than nearest neighbor, but it is not as noticeable unless you zoom in.
+        However, bilinear interpolation did on average take about 2-3 times as long to computer as nearest neighbor interpolation.
+        For the posterboard photo, bilinear interpolation took 16.2 seconds while nearest neighbor took 7.8 seconds.
+    </p>
+    <h3 style="text-align: center;"> Posterboard </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <a href="/3/media/rectified_poster.png" target="_blank">
+            <img src="/3/media/rectified_poster.png" alt="Posterboard Rectified" width="1500">
+        </a>
+    </div>
+    <h3 style="text-align: center;"> Monitor </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <a href="/3/media/rectified_monitor.png" target="_blank">
+            <img src="/3/media/rectified_monitor.png" alt="Monitor Rectified" width="1500">
+        </a>
+    </div>
+    <h2> Part 4: Blend the Images into a Mosaic </h2>
+    <p>
+        To create a mosaic, I had to alter my warping function to handle the output shape by computing the canvas size to capture the entire warped image.
+        I create a homography that maps one image to the other, inverse-warp both of the images using bilinear interpolation, and then blend the two images together.
+        I blend the images using computed soft weights to make sure that any misalignment between the two images is not as noticeable.
+    </p>
+    <h3 style="text-align: center;"> Doe Library </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+         <div>
+            <h3 style="text-align: center;"> Left </h3>
+            <a href="/3/media/Doe_Left.jpeg" target="_blank">
+                <img src="/3/media/Doe_Left.jpeg" alt="Doe Library Left" width="600">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> Right </h3>
+            <a href="/3/media/Doe_Right.jpeg" target="_blank">
+                <img src="/3/media/Doe_Right.jpeg" alt="Doe Library Right" width="600">
+            </a>
+        </div>
+    </div>
+    <h3 style="text-align: center;"> Mosaic </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <a href="/3/media/doe_mosaic_bilinear.jpg" target="_blank">
+            <img src="/3/media/doe_mosaic_bilinear.jpg" alt="Doe Library Mosaic" width="1000">
+        </a>
+    </div>
+    <h3 style="text-align: center;"> Campanile Way </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+         <div>
+            <h3 style="text-align: center;"> Left </h3>
+            <a href="/3/media/campanileway_left.jpeg" target="_blank">
+                <img src="/3/media/campanileway_left.jpeg" alt="Campanile Way Left" width="600">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> Right </h3>
+            <a href="/3/media/campanileway_right.jpeg" target="_blank">
+                <img src="/3/media/campanileway_right.jpeg" alt="Campanile Way Right" width="600">
+            </a>
+        </div>
+    </div>
+    <h3 style="text-align: center;"> Mosaic </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <a href="/3/media/campanileway_mosaic_bilinear.jpg" target="_blank">
+            <img src="/3/media/campanileway_mosaic_bilinear.jpg" alt="Campanile Way Mosaic" width="1000">
+        </a>
+    </div>
+    <h3 style="text-align: center;"> My Room </h3>
+    <p>
+        For this third mosaic, I wanted to experiment starting with the right image rather than with the left, as I had done with the previous two mosaics.
+        By doing so the overlap of the two images was noticably more based in the right photo rather than the left.
+        I also tested both bilinear and nearest neighbor interpolation to compare the results.
+        The results were the same as before, where bilinear interpolation produced a slightly higher quality image at the cost of more computation time.
+        Using bilinear interpolation took an average of 3 minutes for each mosaic, while nearest neighbor took about 1 minute.
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+         <div>
+            <h3 style="text-align: center;"> Left </h3>
+            <a href="/3/media/room_left.jpeg" target="_blank">
+                <img src="/3/media/room_left.jpeg" alt="Room Left" width="600">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> Right </h3>
+            <a href="/3/media/room_right.jpeg" target="_blank">
+                <img src="/3/media/room_right.jpeg" alt="Room Right" width="600">
+            </a>
+        </div>
+    </div>
+    <h3 style="text-align: center;"> Bilinear Mosaic </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <a href="/3/media/room_mosaic_bilinear.jpg" target="_blank">
+            <img src="/3/media/room_mosaic_bilinear.jpg" alt="Room Mosaic" width="1000">
+        </a>
+    </div>
+    <h3 style="text-align: center;"> Nearest Neighbor Mosaic </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <a href="/3/media/room_mosaic_nearest.jpg" target="_blank">
+            <img src="/3/media/room_mosaic_nearest.jpg" alt="Room Mosaic" width="1000">
+        </a>
+    </div>
+</body>
+</html>

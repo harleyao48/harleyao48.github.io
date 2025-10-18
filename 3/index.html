@@ -244,5 +244,169 @@
             <img src="/3/media/room_mosaic_nearest.jpg" alt="Room Mosaic" width="1000">
         </a>
     </div>
+    <h1 style="text-align: center;"> Project 3B: Feature Matching for Autostitching </h1>
+    <h2> Part 1: Harris Corner Detection </h2>
+    <p>
+        I used the provided code for Harris Corner Detection to find corners in my images.
+        It seems that the nature of my images made it difficult to distinguish corners, as most parts of my images were detected as corners.
+        Once I applied Adaptive Non-Maximal Suppression (ANMS), I was able to filter to 500 corners based on corner strength and proximity to other corners.
+    </p>
+     <h3 style="text-align: center;"> Doe Library </h3>
+     <div style="display: flex; gap: 20px; justify-content: center;">
+         <div>
+            <a href="/3/media/b.1doe.png" target="_blank">
+                <img src="/3/media/b.1doe.png" alt="Doe Library Corners" width="1200">
+            </a>
+        </div>
+    </div>
+    <h3 style="text-align: center;"> Campanile Way </h3>
+     <div style="display: flex; gap: 20px; justify-content: center;">
+         <div>
+            <a href="/3/media/b.1campanileway.png" target="_blank">
+                <img src="/3/media/b.1campanileway.png" alt="Campanile Way Corners" width="1200">
+            </a>
+        </div>
+    </div>
+    <h3 style="text-align: center;"> My Room </h3>
+     <div style="display: flex; gap: 20px; justify-content: center;">
+         <div>
+            <a href="/3/media/b.1room.png" target="_blank">
+                <img src="/3/media/b.1room.png" alt="Room Corners" width="1200">
+            </a>
+        </div>
+    </div>
+    <h2> Part 2: Feature Descriptor Extraction </h2>
+    <p>
+        To implement feature descriptor extraction, I took the ANMS corners found in Part 1 and filtered out any corners too close to the edge of my image.
+        Then, for each corner, I extracted the 40x40 pixel patch around the corner and downsized it to an 8x8 patch.
+        I have visualized 16 of these feature descriptors for each image below.
+    </p>
+    <h3 style="text-align: center;"> Doe Library </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <a href="/3/media/b2doe_locations.png" target="_blank">
+                <img src="/3/media/b2doe_locations.png" alt="Doe Library Locations" width="600">
+            </a>
+        </div>
+        <div>
+            <a href="/3/media/b2doe_descriptors.png" target="_blank">
+                <img src="/3/media/b2doe_descriptors.png" alt="Doe Library Descriptors" width="500">
+            </a>
+        </div>
+    </div>
+    <h3 style="text-align: center;"> Campanile Way </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <a href="/3/media/b2campanileway_locations.png" target="_blank">
+                <img src="/3/media/b2campanileway_locations.png" alt="Campanile Way Locations" width="600">
+            </a>
+        </div>
+        <div>
+            <a href="/3/media/b2campanileway_descriptors.png" target="_blank">
+                <img src="/3/media/b2campanileway_descriptors.png" alt="Campanile Way Descriptors" width="500">
+            </a>
+        </div>
+    </div>
+    <h3 style="text-align: center;"> My Room </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <a href="/3/media/b2campanileway_locations.png" target="_blank">
+                <img src="/3/media/b2campanileway_locations.png" alt="Campanile Way Locations" width="600">
+            </a>
+        </div>
+        <div>
+            <a href="/3/media/b2campanileway_descriptors.png" target="_blank">
+                <img src="/3/media/b2campanileway_descriptors.png" alt="Campanile Way Descriptors" width="500">
+            </a>
+        </div>
+    </div>
+    <h2> Part 3: Feature Matching </h2>
+    <p>
+        For matching features between two images, I computed all squared Euclidean distances between feature descriptors from image 1 and image 2.
+        Then, for each feature, I found the closest and second closest feature in the other image.
+        I applied Lowe's ratio test to ensure that the best match was significantly closer than the second match.
+        Lastly, I cross-checked to make sure that the matches were mutual for both images.
+        For the images below, I tried different ratio thresholds to see how it affected the number of matches and their quality.
+        I found that lowering the ratios resulted in better matches.
+    </p>
+    <h3 style="text-align: center;"> Doe Library (Threshold = 0.4) </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <a href="/3/media/b3doe_featmatch_0.4.png" target="_blank">
+                <img src="/3/media/b3doe_featmatch_0.4.png" alt="Doe Library Feature Matches" width="1200">
+            </a>
+        </div>
+    </div>
+    <h3 style="text-align: center;"> Campanile Way (Threshold = 0.3) </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <a href="/3/media/b3campanileway_matching_0.3.png" target="_blank">
+                <img src="/3/media/b3campanileway_matching_0.3.png" alt="Campanile Way Feature Matches" width="1200">
+            </a>
+        </div>
+    </div>
+    <h3 style="text-align: center;"> My Room (Threshold = 0.25) </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <a href="/3/media/b3room_featmatch_0.25.png" target="_blank">
+                <img src="/3/media/b3room_featmatch_0.25.png" alt="My Room Feature Matches" width="1200">
+            </a>
+        </div>
+    </div>
+    <h2> Part 4: RANSAC for Robust Homography </h2>
+    <p>
+        To stitch the mosaics, I built two sets of points from the descriptors I found in Part 3.
+        Then, I iteratively sample 4 random point pairs to compute a homography matrix H.
+        For each iteration, I keep the homography matrix that produces the highest number of inliers, or points whose errors are below 4 pixels.
+        Finally, I use the resulting homography matrix from the loop to blend my images into a mosaic using my bilinear interpolation functions from Part A.
+        Below is the result of my mosaics using RANSAC compared to the mosaics I manually created in Part A.
+        Evidently, automatic stitching with RANSAC produces slightly blurrier mosaics than manually finding the correspondences.
+        However, this method is much more interesting than manually having to find correspondences!
+    </p>
+    <h3 style="text-align: center;"> Doe Library </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3 style="text-align: center;"> Automatic </h3>
+            <a href="/3/media/b4doe_mosaic.png" target="_blank">
+                <img src="/3/media/b4doe_mosaic.png" alt="Doe Library Mosaic" width="600">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> Manual </h3>
+            <a href="/3/media/doe_mosaic_bilinear.jpg" target="_blank">
+                <img src="/3/media/doe_mosaic_bilinear.jpg" alt="Doe Library Mosaic Bilinear" width="600">
+            </a>
+        </div>
+    </div>
+    <h3 style="text-align: center;"> Campanile Way </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+             <h3 style="text-align: center;"> Automatic </h3>
+            <a href="/3/media/b4camp_mosaic.png" target="_blank">
+                <img src="/3/media/b4camp_mosaic.png" alt="Campanile Way Mosaic" width="600">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> Manual </h3>
+            <a href="/3/media/campanileway_mosaic_bilinear.jpg" target="_blank">
+                <img src="/3/media/campanileway_mosaic_bilinear.jpg" alt="Campanile Way Mosaic Bilinear" width="600">
+            </a>
+        </div>
+    </div>
+    <h3 style="text-align: center;"> My Room </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3 style="text-align: center;"> Automatic </h3>
+            <a href="/3/media/b4room_mosaic.png" target="_blank">
+                <img src="/3/media/b4room_mosaic.png" alt="My Room Mosaic" width="600">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> Manual </h3>
+            <a href="/3/media/room_mosaic_bilinear.jpg" target="_blank">
+                <img src="/3/media/room_mosaic_bilinear.jpg" alt="My Room Mosaic Bilinear" width="600">
+            </a>
+        </div>
+    </div>
 </body>
 </html>

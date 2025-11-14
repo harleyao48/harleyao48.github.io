@@ -33,6 +33,14 @@
     </p>
     <div style="display: flex; gap: 20px; justify-content: center;">
         <div>
+            <h3 style="text-align: center;"> Example Image </h3>
+            <a href="/4/media/0_training.JPG" target="_blank">
+                <img src="/4/media/0_training.JPG" alt="Example Image" width="300">
+            </a>
+        </div>
+    </div>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
             <h3 style="text-align: center;"> Horizontal View </h3>
             <a href="/4/media/0.3_horizontalview.png" target="_blank">
                 <img src="/4/media/0.3_horizontalview.png" alt="Horizontal View" width="600">
@@ -143,6 +151,37 @@
         </div>
     </div>
     <h2> Part 2: Fit a Neural Radiance Field from Multi-view Images </h2>
-    
+    <h3 style="text-align: center;"> 2.1: Create Rays from Cameras</h3>
+    <p>
+        For 2.1, I first implemented a transform(T, x) function to convert normalized pixel coordinates in an image to 3D coordinates.
+        To convert 2D pixel coordinates back to 3D camera coordinates, I implemented pixel_to_camera(K, uv, s), which uses the camera extrinsic matrix to calculate the transformations.
+        Lastly, I defined pixel_to_ray(K, c2w, uv), which combines the previous two functions to compute the rays for each pixel in the image by calculating the origin and direction of the rays in world coordinates.  
+    </p>
+    <h2> Part 2: Fit a Neural Radiance Field from Multi-view Images </h2>
+    <h3 style="text-align: center;"> 2.2: Sampling</h3>
+    <p>
+        For 2.2, I expanded on my functions from 2.1 to randomly sample a fixed number of rays per training iteration.
+        My process for this function was to load all images and their corresponding poses (c2w) and intrinsics (K).
+        Then, I computed the rays for each pixel in every image using pixel_to_ray(K, c2w, uv).
+        Finally, I randomly selected a fixed number of rays from the entire set of rays across all images to return a batch containing ray origins, directions, and RGB values.
+    </p>
+    <h3 style="text-align: center;"> 2.3: Putting the Dataloading All Together</h3>
+    <p>
+        Here are the visualizations of the work I did from the previous 2 parts using the lego dataset.
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3 style="text-align: center;">  All Cameras and Rays </h3>
+            <a href="/4/media/2.3_image1.png" target="_blank">
+                <img src="/4/media/2.3_image1.png" alt="All Cameras and Rays" width="600">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> Rays from One Camera </h3>
+            <a href="/4/media/2.3_image2.png" target="_blank">
+                <img src="/4/media/2.3_image2.png" alt="Rays from One Camera" width="600">
+            </a>
+        </div>
+    </div>
 </body>
 </html>

@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Harley Ao - Project 4</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        img {
+            border-radius: 8px;
+        }
+        nav a {
+            color: rgba(17, 106, 87, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <nav style="display: flex; gap: 18px; align-items: center; padding: 10px 0; margin-bottom: 28px; border-bottom: 2px solid rgba(17, 106, 87, 0.5);">
+        <a href="/index.html" style="text-decoration: none; font-weight: bold; padding: 6px 14px;">Home</a>
+        <a href="/0/index.html" style="text-decoration: none; font-weight: bold; padding: 6px 14px;">Project 0</a>
+        <a href="/1/index.html" style="text-decoration: none; font-weight: bold; padding: 6px 14px;">Project 1</a>
+        <a href="/2/index.html" style="text-decoration: none; font-weight: bold; padding: 6px 14px;">Project 2</a>
+        <a href="/3/index.html" style="text-decoration: none; font-weight: bold; padding: 6px 14px;">Project 3</a>
+        <a href="/4/index.html" style="text-decoration: none; font-weight: bold; padding: 6px 14px;">Project 4</a>
+        <a href="/5/index.html" style="text-decoration: none; font-weight: bold; padding: 6px 14px;">Project 5</a>
+        <a href="https://cal-cs180.github.io/fa25/hw/proj5/index.html" style="margin-left: auto; text-decoration: none; font-weight: bold; padding: 6px 14px;">Spec</a>
+    </nav>
+    <h1 style="text-align: center;"> Project 5: Fun with Diffusion Models</h1>
+    <h1> Part A: The Power of Diffusion Models</h1>
+    <h2> Part 0: Setup </h2>
+    <p> 
+        To set up the environment, I loaded the DeepFloyd IF model and used Huggingface cluster A for generating prompt embeddings.
+        I generated images with different inference steps (10 and 20) and seeds to find acceptable images for the prompts I selected.
+        Here are some example images I generated using seed 676767.
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3 style="text-align: center;">  a photo of a hipster barista </h3>
+            <a href="/5/media/part0_barista.png" target="_blank">
+                <img src="/5/media/part0_barista.png" alt="a photo of a hipster barista" width="350">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> a photo of a dog </h3>
+            <a href="/5/media/part0_dog.png" target="_blank">
+                <img src="/5/media/part0_dog.png" alt="a photo of a dog" width="350">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> an oil painting of people around a campfire </h3>
+            <a href="/5/media/part0_fireplace.png" target="_blank">
+                <img src="/5/media/part0_fireplace.png" alt="an oil painting of people around a campfire" width="350">
+            </a>
+        </div>
+    </div>
+    <h2> Part 1: Sampling Loops </h2>
+    <h3> 1.1: Implementing the Forward Process </h3>
+    <p>
+        First, we implement the forward process using this equation:
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <a href="/5/media/1.1_equations.png" target="_blank">
+            <img src="/5/media/1.1_equations.png" height="150">
+        </a>
+    </div>
+    <p>
+        This equation adds noise and scales the image at each step.
+        Below is the test image and the results after applying the forward process 250, 500, and 750 times.
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <a href="/5/media/1.1_test.png" target="_blank">
+                <img src="/5/media/1.1_test.png" alt="test image of the campanile" height="200">
+            </a>
+        </div>
+        <div>
+            <a href="/5/media/1.1_results.png" target="_blank">
+                <img src="/5/media/1.1_results.png" alt="results image" height="200">
+            </a>
+        </div>
+    </div>
+    <h3> 1.2: Classical Denoising </h3>
+    <p>
+        Next, we attempt to remove the noise using Gaussian blurring.
+        However, this method is not very effective, as it removes little noise and blurs the image significantly.
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <a href="/5/media/1.2.png" target="_blank">
+            <img src="/5/media/1.2.png" alt="gaussian denoise image" width="400">
+        </a>
+    </div>
+    <h3> 1.3: One Step Denoising </h3>
+    <p>
+        Now, we'll try using a pretrained diffusion model instead.
+        The model attempts to remove noise by predicting the noise added in the forward process.
+        Compared to the Gaussian blurring from 1.2, this method is much more effective at denoising.
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <a href="/5/media/1.3.png" target="_blank">
+            <img src="/5/media/1.3.png" alt="denoising image" width="700">
+        </a>
+    </div>
+    <h3> 1.4: Implementing Iterative Denoising </h3>
+    <p>
+        To further improve denoising, we implement iterative denoising to repeat the one-step denoising.
+        We do this using the following equation:
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <a href="/5/media/1.4_equation.png" target="_blank">
+                <img src="/5/media/1.4_equation.png" height="100">
+            </a>
+        </div>
+        <div>
+            <a href="/5/media/1.4_variables.png" target="_blank">
+                <img src="/5/media/1.4_variables.png" height="100">
+            </a>
+        </div>
+    </div>
+    <p>
+        During each iteration, we remove some noise based on calculations using the noise scaling coefficients. 
+        We denoise starting from timestep 990 to timestep 0 with a step size of 30. 
+        Using an iterative approach resulted in more detailed images compared to the one-step denoising.
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <a href="/5/media/1.4_noisy.png" target="_blank">
+                <img src="/5/media/1.4_noisy.png" width="250">
+            </a>
+        </div>
+        <div>
+            <a href="/5/media/1.4_loop05.png" target="_blank">
+                <img src="/5/media/1.4_loop05.png" width="250">
+            </a>
+        </div>
+        <div>
+            <a href="/5/media/1.4_loop10.png" target="_blank">
+                <img src="/5/media/1.4_loop10.png"  width="250">
+            </a>
+        </div>
+        <div>
+            <a href="/5/media/1.4_loop15.png" target="_blank">
+                <img src="/5/media/1.4_loop15.png" width="250">
+            </a>
+        </div>
+        <div>
+            <a href="/5/media/1.4_loop20.png" target="_blank">
+                <img src="/5/media/1.4_loop20.png" width="250">
+            </a>
+        </div>
+    </div>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <a href="/5/media/1.4_iterative.png" target="_blank">
+                <img src="/5/media/1.4_iterative.png" width="250">
+            </a>
+        </div>
+        <div>
+            <a href="/5/media/1.4_one_step.png" target="_blank">
+                <img src="/5/media/1.4_one_step.png" width="250">
+            </a>
+        </div>
+        <div>
+            <a href="/5/media/1.4_gaussian.png" target="_blank">
+                <img src="/5/media/1.4_gaussian.png"  width="250">
+            </a>
+        </div>
+    </div>
+    <h3> 1.5: Diffusion Model Sampling </h3>
+    <p>
+        We can also use the iterative denoise function to generate images from scratch by starting from pure noise.
+        Here are some of the images I generated using the prompt, "a hight quality photo".
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <a href="/5/media/1.5.png" target="_blank">
+            <img src="/5/media/1.5.png" alt="diffusion model sampling" height="200">
+        </a>
+    </div>
+    <h3> 1.6: Classifer Free Guidance </h3>
+    <p>
+        Although the images from 1.5 seem to make out a plausible image, some of them look non-sensical.
+        To fix this, we implement Classifier-Free Guidance (CFG) to generate conditional noise.
+        In other words, the noise will not be fully random, as it will be influenced by the condition given by the model.
+        The results below show results that resemble more plausible images compared to 1.5.
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <a href="/5/media/1.6_im1.png" target="_blank">
+                <img src="/5/media/1.6_im1.png" width="200">
+            </a>
+        </div>
+        <div>
+            <a href="/5/media/1.6_im2.png" target="_blank">
+                <img src="/5/media/1.6_im2.png" width="200">
+            </a>
+        </div>
+        <div>
+            <a href="/5/media/1.6_im3.png" target="_blank">
+                <img src="/5/media/1.6_im3.png"  width="200">
+            </a>
+        </div>
+        <div>
+            <a href="/5/media/1.6_im4.png" target="_blank">
+                <img src="/5/media/1.6_im4.png" width="200">
+            </a>
+        </div>
+        <div>
+            <a href="/5/media/1.6_im5.png" target="_blank">
+                <img src="/5/media/1.6_im5.png" width="200">
+            </a>
+        </div>
+    </div>
+    <h3> 1.7: Image-to-image Translation </h3>
+    <p>
+        The process of adding noise to an image and then denoising it basically allows us to make edits to the image.
+        During the denoising process, the diffusion model doesn't know what the original image looks like, so it has to rely on "creativity" to replace the noise.
+        Here are the results of running the forward process, and then running the iterative denoise function using a starting index of [1, 3, 5, 7, 10, 20] steps on the Campanile and two album covers.
+    </p>
+    <h3 style="text-align: center;">  Campanile </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3 style="text-align: center;"> 1 </h3>
+            <a href="/5/media/1.7_campim1.png" target="_blank">
+                <img src="/5/media/1.7_campim1.png" width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 3 </h3>
+            <a href="/5/media/1.7_campim2.png" target="_blank">
+                <img src="/5/media/1.7_campim2.png" width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 5 </h3>
+            <a href="/5/media/1.7_campim3.png" target="_blank">
+                <img src="/5/media/1.7_campim3.png"  width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 7 </h3>
+            <a href="/5/media/1.7_campim4.png" target="_blank">
+                <img src="/5/media/1.7_campim4.png" width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 10 </h3>
+            <a href="/5/media/1.7_campim5.png" target="_blank">
+                <img src="/5/media/1.7_campim5.png" width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 20 </h3>
+            <a href="/5/media/1.7_campim6.png" target="_blank">
+                <img src="/5/media/1.7_campim6.png" width="175">
+            </a>
+        </div>
+    </div>
+    <h3 style="text-align: center;"> Eternal Sunshine Album </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3 style="text-align: center;"> 1 </h3>
+            <a href="/5/media/1.7_esim1.png" target="_blank">
+                <img src="/5/media/1.7_esim1.png" width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 3 </h3>
+            <a href="/5/media/1.7_esim2.png" target="_blank">
+                <img src="/5/media/1.7_esim2.png" width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 5 </h3>
+            <a href="/5/media/1.7_esim3.png" target="_blank">
+                <img src="/5/media/1.7_esim3.png"  width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 7 </h3>
+            <a href="/5/media/1.7_esim4.png" target="_blank">
+                <img src="/5/media/1.7_esim4.png" width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 10 </h3>
+            <a href="/5/media/1.7_esim5.png" target="_blank">
+                <img src="/5/media/1.7_esim5.png" width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 20 </h3>
+            <a href="/5/media/1.7_esim6.png" target="_blank">
+                <img src="/5/media/1.7_esim6.png" width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> Original </h3>
+            <a href="/5/media/eternal_sunshine.png" target="_blank">
+                <img src="/5/media/eternal_sunshine.png" width="175">
+            </a>
+        </div>
+    </div>
+    <h3 style="text-align: center;"> Hit Me Hard and Soft Album </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3 style="text-align: center;"> 1 </h3>
+            <a href="/5/media/1.7_hmhasim1.png" target="_blank">
+                <img src="/5/media/1.7_hmhasim1.png" width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 3 </h3>
+            <a href="/5/media/1.7_hmhasim2.png" target="_blank">
+                <img src="/5/media/1.7_hmhasim2.png" width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 5 </h3>
+            <a href="/5/media/1.7_hmhasim3.png" target="_blank">
+                <img src="/5/media/1.7_hmhasim3.png"  width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 7 </h3>
+            <a href="/5/media/1.7_hmhasim4.png" target="_blank">
+                <img src="/5/media/1.7_hmhasim4.png" width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 10 </h3>
+            <a href="/5/media/1.7_hmhasim5.png" target="_blank">
+                <img src="/5/media/1.7_hmhasim5.png" width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 20 </h3>
+            <a href="/5/media/1.7_hmhasim6.png" target="_blank">
+                <img src="/5/media/1.7_hmhasim6.png" width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> Original </h3>
+            <a href="/5/media/hit_me_hard_and_soft.jpg" target="_blank">
+                <img src="/5/media/hit_me_hard_and_soft.jpg" width="175">
+            </a>
+        </div>
+    </div>
+    <h3> 1.7.1: Editing Hand-Drawn and Web Images </h3>
+    <p>
+        This process approaches hand-drawn and web images at a faster rate since these images are less complex.
+        Here are the results of the same process run on Garfield, a tree drawing, and a smiling heart drawing.
+    </p>
+    <h3 style="text-align: center;"> Garfield </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <a href="/5/media/1.7.1_garfield.png" target="_blank">
+                <img src="/5/media/1.7.1_garfield.png" height="175">
+            </a>
+        </div>
+        <div>
+            <a href="/5/media/garfield.jpg" target="_blank">
+                <img src="/5/media/garfield.jpg" height="175">
+            </a>
+        </div>
+    </div>
+    <h3 style="text-align: center;"> Tree </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <a href="/5/media/1.7.1_tree.png" target="_blank">
+            <img src="/5/media/1.7.1_tree.png" height="175">
+        </a>
+    </div>
+    <h3 style="text-align: center;"> Smiling Heart </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <a href="/5/media/1.7.1_heart.png" target="_blank">
+            <img src="/5/media/1.7.1_heart.png" height="175">
+        </a>
+    </div>
+    <h3> 1.7.2: Inpainting </h3>
+    <p> 
+        Time for inpainting!
+        Using a binary mask, we can specify a specific area of the image to edit.
+        We will replace everything within this area without any influence from the original image.
+        Basically, we are generating a new image for just that area while keeping the rest of the image intact.
+        Here are the results of inpainting on the Campanile an album cover, and a Binge coffee!
+    </p>
+    <h3 style="text-align: center;"> Campanile </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <a href="/5/media/1.7.2_camp.png" target="_blank">
+                <img src="/5/media/1.7.2_camp.png" height="200">
+            </a>
+        </div>
+        <div>
+            <a href="/5/media/1.7.2_camp_in.png" target="_blank">
+                <img src="/5/media/1.7.2_camp_in.png" height="200">
+            </a>
+        </div>
+    </div>
+    <h3 style="text-align: center;"> Hit Me Hard and Soft Album </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <a href="/5/media/1.7.2_hmhas.png" target="_blank">
+                <img src="/5/media/1.7.2_hmhas.png" height="200">
+            </a>
+        </div>
+        <div>
+            <a href="/5/media/1.7.2_hmhas_in.png" target="_blank">
+                <img src="/5/media/1.7.2_hmhas_in.png" height="200">
+            </a>
+        </div>
+    </div>
+    <h3 style="text-align: center;"> Binge Coffee </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <a href="/5/media/1.7.2_binge.png" target="_blank">
+                <img src="/5/media/1.7.2_binge.png" height="200">
+            </a>
+        </div>
+        <div>
+            <a href="/5/media/1.7.2_binge_in.png" target="_blank">
+                <img src="/5/media/1.7.2_binge_in.png" height="200">
+            </a>
+        </div>
+    </div>
+    <h3> 1.7.3: Text-Conditional Image-to-image Translation </h3>
+    <p>
+        We've been guiding the process with the text prompt "a high quality photo" until now. 
+        For the next few images, we use different prompts to guide the denoising process.
+        You can see how the images start off looking more like the prompt, then gradually becoming more like the original images.
+    </p>
+    <h3 style="text-align: center;"> "Pencil" to Campanile </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3 style="text-align: center;"> 1 </h3>
+            <a href="/5/media/1.7.3_camp1.png" target="_blank">
+                <img src="/5/media/1.7.3_camp1.png" width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 3 </h3>
+            <a href="/5/media/1.7.3_camp2.png" target="_blank">
+                <img src="/5/media/1.7.3_camp2.png" width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 5 </h3>
+            <a href="/5/media/1.7.3_camp3.png" target="_blank">
+                <img src="/5/media/1.7.3_camp3.png"  width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 7 </h3>
+            <a href="/5/media/1.7.3_camp4.png" target="_blank">
+                <img src="/5/media/1.7.3_camp4.png" width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 10 </h3>
+            <a href="/5/media/1.7.3_camp5.png" target="_blank">
+                <img src="/5/media/1.7.3_camp5.png" width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 20 </h3>
+            <a href="/5/media/1.7.3_camp6.png" target="_blank">
+                <img src="/5/media/1.7.3_camp6.png" width="175">
+            </a>
+        </div>
+    </div>
+    <h3 style="text-align: center;"> "Lithograph of Waterfalls" to Hit Me Hard and Soft Album </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3 style="text-align: center;"> 1 </h3>
+            <a href="/5/media/1.7.3_hmhas1.png" target="_blank">
+                <img src="/5/media/1.7.3_hmhas1.png" width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 3 </h3>
+            <a href="/5/media/1.7.3_hmhas2.png" target="_blank">
+                <img src="/5/media/1.7.3_hmhas2.png" width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 5 </h3>
+            <a href="/5/media/1.7.3_hmhas3.png" target="_blank">
+                <img src="/5/media/1.7.3_hmhas3.png"  width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 7 </h3>
+            <a href="/5/media/1.7.3_hmhas4.png" target="_blank">
+                <img src="/5/media/1.7.3_hmhas4.png" width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 10 </h3>
+            <a href="/5/media/1.7.3_hmhas5.png" target="_blank">
+                <img src="/5/media/1.7.3_hmhas5.png" width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 20 </h3>
+            <a href="/5/media/1.7.3_hmhas6.png" target="_blank">
+                <img src="/5/media/1.7.3_hmhas6.png" width="175">
+            </a>
+        </div>
+    </div>
+    <h3 style="text-align: center;"> "Oil Painting of People around a Campfire" to Eternal Sunshine Album </h3>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3 style="text-align: center;"> 1 </h3>
+            <a href="/5/media/1.7.3_es1.png" target="_blank">
+                <img src="/5/media/1.7.3_es1.png" width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 3 </h3>
+            <a href="/5/media/1.7.3_es2.png" target="_blank">
+                <img src="/5/media/1.7.3_es2.png" width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 5 </h3>
+            <a href="/5/media/1.7.3_es3.png" target="_blank">
+                <img src="/5/media/1.7.3_es3.png"  width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 7 </h3>
+            <a href="/5/media/1.7.3_es4.png" target="_blank">
+                <img src="/5/media/1.7.3_es4.png" width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 10 </h3>
+            <a href="/5/media/1.7.3_es5.png" target="_blank">
+                <img src="/5/media/1.7.3_es5.png" width="175">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> 20 </h3>
+            <a href="/5/media/1.7.3_es6.png" target="_blank">
+                <img src="/5/media/1.7.3_es6.png" width="175">
+            </a>
+        </div>
+    </div>
+    <h3> 1.8: Visual Anagrams </h3>
+    <p>
+        Now, we'll create visual anagrams using two different prompts.
+        We denoise for one prompt, then flip the image upside down and denoise for the other prompt.
+        Once we flip it back upright, average the noise estimates and use this to perform denoising.
+        This alternating process will create images that look like one prompt when viewed normally, and the other when flipped upside down.
+        Madame Morrible, M M, flip it around, what do we get? WICKED WITCH!!!
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3 style="text-align: center;"> Oil Painting of an Old Man </h3>
+            <a href="/5/media/1.8_im1.png" target="_blank">
+                <img src="/5/media/1.8_im1.png" width="400">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> Oil Painting of People Around a Campfire </h3>
+            <a href="/5/media/1.8_im1f.png" target="_blank">
+                <img src="/5/media/1.8_im1f.png" width="400">
+            </a>
+        </div>
+    </div>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3 style="text-align: center;"> Oil Painting of a Snowy Mountain Village </h3>
+            <a href="/5/media/1.8_im2.png" target="_blank">
+                <img src="/5/media/1.8_im2.png" width="400">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> Oil Painting of People Around a Campfire </h3>
+            <a href="/5/media/1.8_im2f.png" target="_blank">
+                <img src="/5/media/1.8_im2f.png" width="400">
+            </a>
+        </div>
+    </div>
+    <h3> 1.9: Hybrid Images </h3>
+    <p>
+        To create hybrid images, we estimate the noise for two different prompts.
+        Then, we combine low frequencies from one noise estimate with high frequencies from the other.
+        Finally, we use this combined noise estimate to perform denoising.
+        From different viewing distances, the same image looks like one of the two prompts!
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3 style="text-align: center;"> Lithograph of Waterfalls </h3>
+            <a href="/5/media/1.9_im1.png" target="_blank">
+                <img src="/5/media/1.9_im1.png" width="400">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> Lithograph of a skull </h3>
+            <a href="/5/media/1.9_im1.png" target="_blank">
+                <img src="/5/media/1.9_im1.png" width="100">
+            </a>
+        </div>
+    </div>
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <div>
+            <h3 style="text-align: center;"> Oil Painting of a Mountain Village </h3>
+            <a href="/5/media/1.9_im2.png" target="_blank">
+                <img src="/5/media/1.9_im2.png" width="50">
+            </a>
+        </div>
+        <div>
+            <h3 style="text-align: center;"> Lithograph of Waterfalls </h3>
+            <a href="/5/media/1.9_im2.png" target="_blank">
+                <img src="/5/media/1.9_im2.png" width="300">
+            </a>
+        </div>
+    </div>
+</body>
+</html>
